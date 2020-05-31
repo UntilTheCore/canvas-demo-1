@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			/* canvas 类似于img 它们会在内容的下面产生非预期空隙，造成出现滚动条，解决方法
+            1、设置"display:block"
+            2、设置"vertical-align:top"
+            */
+			#canvas {
+				display: block;
+				/* vertical-align: top; */
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+			var canvas = document.getElementById('canvas')
+			canvas.width = document.documentElement.clientWidth
+			canvas.height = document.documentElement.clientHeight
+			var ctx = canvas.getContext('2d')
+
+			ctx.lineWidth = 10
+			ctx.lineCap = 'round'
+			let last
+			let isPainting = false
+
+			canvas.addEventListener('mousedown', function (e) {
+				last = [e.clientX, e.clientY]
+				isPainting = true
+			})
+
+			canvas.onmousemove = (e) => {
+				if (isPainting) {
+					console.log(1)
+					let x = e.clientX
+					let y = e.clientY
+					drawLine(last[0], last[1], x, y)
+					last = [x, y]
+				}
+			}
+
+			canvas.onmouseup = (e) => {
+				isPainting = false
+			}
+
+			// 移动端画线
+			// 判断是否在移动端
+			let isTouchDevice = 'ontouchstart' in document.documentElement
+			if (isTouchDevice) {
+				canvas.ontouchstart = (e) => {
+					last = [e.touches[0].clientX, e.touches[0].clientY]
+				}
+				canvas.ontouchmove = (e) => {
+					let x = e.touches[0].clientX
+					let y = e.touches[0].clientY
+					drawLine(last[0], last[1], x, y)
+					last = [x, y]
+				}
+			}
+			function drawLine(x1, y1, x2, y2) {
+				ctx.beginPath()
+				ctx.moveTo(x1, y1)
+				ctx.lineTo(x2, y2)
+				ctx.stroke()
+			}
+		</script>
+	</body>
+</html>
